@@ -1,9 +1,13 @@
 package com.fuad.story_app.ui.view
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Patterns
+import android.view.View
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -30,7 +34,63 @@ class RegisterActivity : AppCompatActivity() {
             insets
         }
 
+        viewModel.registerMessage.observe(this) { message ->
+            if (message != null) {
+                showToast(message)
+            }
+        }
+        viewModel.isRegisterSuccess.observe(this) { isError ->
+            if (isError == false) {
+                clearEditText()
+                showDialog()
+            }
+        }
+        viewModel.isLoading.observe(this) { isLoading ->
+            showLoading(isLoading)
+        }
+
         setListener()
+    }
+
+    override fun onStart() {
+        super.onStart()
+        viewModel.clearRegister()
+    }
+
+    private fun showLoading(loading: Boolean) {
+        if (loading) {
+            binding.progressBar.visibility = View.VISIBLE
+        } else {
+            binding.progressBar.visibility = View.GONE
+        }
+    }
+
+    private fun showToast(message: String?) {
+        Toast.makeText(this, message, Toast.LENGTH_LONG).show()
+    }
+
+    private fun clearEditText() {
+        binding.edRegisterName.setText("")
+        binding.edRegisterEmail.setText("")
+        binding.edRegisterEmail.error = null
+        binding.edRegisterPassword.setText("")
+        binding.edRegisterPassword.error = null
+    }
+
+    private fun showDialog() {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Berhasil Buat Akun!")
+            .setMessage("Silahkan login sekarang")
+            .setPositiveButton("Login") { _, _ ->
+                val intent = Intent(this, LoginActivity::class.java).apply {
+                    flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
+                }
+
+                startActivity(intent)
+            }
+
+        val dialog = builder.create()
+        dialog.show()
     }
 
     private fun setListener() {

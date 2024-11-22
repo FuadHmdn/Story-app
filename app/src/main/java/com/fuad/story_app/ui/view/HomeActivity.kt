@@ -26,7 +26,10 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun checkSession() {
-
+        if (viewModel.getSession() == null) {
+            val intent = Intent(this, LoginActivity::class.java)
+            startActivity(intent)
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
