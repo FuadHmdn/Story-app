@@ -1,9 +1,11 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Base.Theme.Storyapp" parent="Theme.Material3.DayNight.NoActionBar">
+    <style name="Base.Theme.Storyapp" parent="Theme.Material3.DayNight">
         <!-- Customize your light theme here. -->
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
     </style>
 
-    <style name="Theme.Storyapp" parent="Base.Theme.Storyapp" />
+    <style name="Theme.Storyapp" parent="Theme.Material3.DayNight.NoActionBar">
+
+    </style>
 </resources>

@@ -3,15 +3,20 @@ package com.fuad.story_app.ui.view
 import android.os.Bundle
 import android.util.Patterns
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.widget.addTextChangedListener
 import com.fuad.story_app.R
 import com.fuad.story_app.databinding.ActivityRegisterBinding
+import com.fuad.story_app.ui.viewmodel.UserViewModel
+import com.fuad.story_app.ui.viewmodel.ViewModelFactory
 
 class RegisterActivity : AppCompatActivity() {
 
+    private val factory: ViewModelFactory by lazy { ViewModelFactory.getInstance(this) }
+    private val viewModel: UserViewModel by viewModels { factory }
     private lateinit var binding: ActivityRegisterBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -61,7 +66,7 @@ class RegisterActivity : AppCompatActivity() {
             }
 
             if (valid) {
-
+                viewModel.register(nama, email, password)
             }
         }
     }

@@ -6,4 +6,10 @@
     <string name="full_name">Full Name</string>
     <string name="email">Email</string>
     <string name="password">Password</string>
+    <string name="log_out">Log Out</string>
+    <string name="selamat_datang">Selamat Datang!</string>
+    <string name="image_login">Image Login</string>
+    <string name="login">Login</string>
+    <string name="sign_in">Sign In</string>
+    <string name="buat_akun">Buat Akun</string>
 </resources>

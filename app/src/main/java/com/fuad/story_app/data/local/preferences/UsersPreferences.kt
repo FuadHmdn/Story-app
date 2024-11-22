@@ -8,6 +8,7 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlin.math.log
 
 val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "login")
 
@@ -24,6 +25,12 @@ class UsersPreferences private constructor(val dataStore: DataStore<Preferences>
     suspend fun saveLoginSession(token: String){
         dataStore.edit { login ->
             login[LOGIN_SESSION] = token
+        }
+    }
+
+    suspend fun removeLoginSession(){
+        dataStore.edit { preferences ->
+            preferences.remove(LOGIN_SESSION)
         }
     }
 

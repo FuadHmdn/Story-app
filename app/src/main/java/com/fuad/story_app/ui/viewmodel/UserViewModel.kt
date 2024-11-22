@@ -18,4 +18,10 @@ class UserViewModel(private val userRepository: UserRepository): ViewModel() {
             userRepository.login(email, password)
         }
     }
+
+    fun removeSession(){
+        viewModelScope.launch {
+            userRepository.removeSession()
+        }
+    }
 }
