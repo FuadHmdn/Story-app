@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Story-app</string>
+    <string name="error_password">Password tidak boleh kurang dari 8 karakter</string>
+    <string name="register">Register</string>
+    <string name="image_registration">Image Registration</string>
+    <string name="full_name">Full Name</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+</resources>
