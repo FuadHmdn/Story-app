@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.map
 
 val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "login")
 
-class UsersPreferences private constructor(val dataStore: DataStore<Preferences>){
+class UsersPreferences private constructor(private val dataStore: DataStore<Preferences>){
 
     private val TOKEN = stringPreferencesKey("token")
     private val USER_ID = stringPreferencesKey("user_id")
@@ -23,9 +23,9 @@ class UsersPreferences private constructor(val dataStore: DataStore<Preferences>
     fun getLoginSession(): Flow<LoginResult> {
         return dataStore.data.map {
             LoginResult(
-                it[TOKEN]?: "",
+                it[USER_NAME]?: "",
                 it[USER_ID]?: "",
-                it[USER_NAME]?: ""
+                it[TOKEN]?: ""
             )
         }
     }

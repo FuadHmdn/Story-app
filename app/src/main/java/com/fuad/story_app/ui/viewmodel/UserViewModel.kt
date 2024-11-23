@@ -1,9 +1,10 @@
 package com.fuad.story_app.ui.viewmodel
 
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
+import com.fuad.story_app.data.remote.response.ListStoryItem
 import com.fuad.story_app.data.remote.response.LoginResult
 import com.fuad.story_app.data.repository.UserRepository
 import kotlinx.coroutines.launch
@@ -17,6 +18,11 @@ class UserViewModel(private val userRepository: UserRepository) : ViewModel() {
     val isLoginSuccess: LiveData<Boolean?> get() = userRepository.isLoginSuccess
     val loginMessage: LiveData<String?> get() = userRepository.loginMessage
     val loginResult: LiveData<LoginResult?> get() = userRepository.loginResult
+
+    val getAllResult: LiveData<List<ListStoryItem>> get() = userRepository.getALlResult
+    val getAllMessage: LiveData<String?> get() = userRepository.getAllMessage
+    private val _loginStatus = MutableLiveData<Boolean>()
+    val loginStatus: LiveData<Boolean> get() = _loginStatus
 
     fun register(name: String, email: String, password: String) {
         viewModelScope.launch {
@@ -34,6 +40,12 @@ class UserViewModel(private val userRepository: UserRepository) : ViewModel() {
         userRepository.clearRegisterLogin()
     }
 
+    fun getAllStory() {
+        viewModelScope.launch {
+            userRepository.getAllStories(50)
+        }
+    }
+
     fun removeSession() {
         viewModelScope.launch {
             userRepository.removeSession()
@@ -46,12 +58,12 @@ class UserViewModel(private val userRepository: UserRepository) : ViewModel() {
         }
     }
 
-    fun getSession(): LiveData<LoginResult> {
-        return userRepository.getSession().asLiveData()
-    }
-
-    fun getLoginStatus(): LiveData<Boolean> {
-        return userRepository.getLoginStatus().asLiveData()
+    fun getLoginStatus() {
+        viewModelScope.launch {
+            userRepository.getLoginStatus().collect {
+                _loginStatus.value = it
+            }
+        }
     }
 
     fun saveSession(session: LoginResult) {

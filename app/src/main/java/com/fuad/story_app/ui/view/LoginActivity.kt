@@ -34,8 +34,16 @@ class LoginActivity : AppCompatActivity() {
             insets
         }
 
+        viewModel.loginResult.observe(this) { result ->
+            result?.let {
+                val session = LoginResult(result.name, result.userId, result.token)
+                viewModel.saveSession(session)
+            }
+        }
+
         viewModel.isLoginSuccess.observe(this){ isError ->
             if (isError == false) {
+                viewModel.saveLoginStatus(true)
                 moveToHomeActivity()
             }
         }
@@ -44,14 +52,6 @@ class LoginActivity : AppCompatActivity() {
             message?.let {
                 showToast(it)
                 viewModel.clearMessage()
-            }
-        }
-
-        viewModel.loginResult.observe(this){ result ->
-            result?.let {
-                val session = LoginResult(result.token, result.userId, result.name)
-                viewModel.saveSession(session)
-                viewModel.saveLoginStatus(true)
             }
         }
 
@@ -92,7 +92,6 @@ class LoginActivity : AppCompatActivity() {
                 binding.edLoginEmail.error = null
             }
         }
-
 
         binding.btnLogin.setOnClickListener {
 
