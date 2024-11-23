@@ -1,4 +1,4 @@
-package com.fuad.story_app.data.api
+package com.fuad.story_app.data.remote
 
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient

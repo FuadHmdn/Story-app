@@ -1,7 +1,7 @@
 package com.fuad.story_app.di
 
 import android.content.Context
-import com.fuad.story_app.data.api.ApiConfig
+import com.fuad.story_app.data.remote.ApiConfig
 import com.fuad.story_app.data.local.preferences.UsersPreferences
 import com.fuad.story_app.data.local.preferences.dataStore
 import com.fuad.story_app.data.repository.UserRepository

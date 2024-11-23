@@ -2,8 +2,8 @@ package com.fuad.story_app.data.repository
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.fuad.story_app.data.api.ApiService
-import com.fuad.story_app.data.api.response.Response
+import com.fuad.story_app.data.remote.ApiService
+import com.fuad.story_app.data.remote.response.Response
 import com.fuad.story_app.data.local.preferences.UsersPreferences
 import com.google.gson.Gson
 import kotlinx.coroutines.flow.first

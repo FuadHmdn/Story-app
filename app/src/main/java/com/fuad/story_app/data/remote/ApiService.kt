@@ -1,15 +1,14 @@
-package com.fuad.story_app.data.api
+package com.fuad.story_app.data.remote
 
-import com.fuad.story_app.data.api.response.DetailStoryResponse
-import com.fuad.story_app.data.api.response.GetAllStoryResponse
-import com.fuad.story_app.data.api.response.LoginResponse
-import com.fuad.story_app.data.api.response.Response
+import com.fuad.story_app.data.remote.response.DetailStoryResponse
+import com.fuad.story_app.data.remote.response.GetAllStoryResponse
+import com.fuad.story_app.data.remote.response.LoginResponse
+import com.fuad.story_app.data.remote.response.Response
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
 import retrofit2.http.GET
-import retrofit2.http.Header
 import retrofit2.http.Multipart
 import retrofit2.http.POST
 import retrofit2.http.Part
