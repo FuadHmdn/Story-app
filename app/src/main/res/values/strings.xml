@@ -1,15 +1,21 @@
 <resources>
     <string name="app_name">Story-app</string>
     <string name="error_password">Password tidak boleh kurang dari 8 karakter</string>
-    <string name="register">Register</string>
-    <string name="image_registration">Image Registration</string>
-    <string name="full_name">Full Name</string>
+    <string name="register">Daftar</string>
+    <string name="image_registration">Gambar Daftar</string>
+    <string name="full_name">Nama Lengkap</string>
     <string name="email">Email</string>
-    <string name="password">Password</string>
-    <string name="log_out">Log Out</string>
+    <string name="password">Kata Sandi</string>
+    <string name="log_out">Keluar</string>
     <string name="selamat_datang">Selamat Datang!</string>
-    <string name="image_login">Image Login</string>
-    <string name="login">Login</string>
-    <string name="sign_in">Sign In</string>
+    <string name="image_login">Gambar Masuk</string>
+    <string name="login">Masuk</string>
+    <string name="sign_in">Daftar</string>
     <string name="buat_akun">Buat Akun</string>
+    <string name="email_tidak_valid">Masukan Email yang valid!</string>
+    <string name="masukan_nama_terlebih_dahulu">Masukan nama terlebih dahulu!</string>
+    <string name="masukan_email_terlebih_dahulu">Masukan email terlebih dahulu!</string>
+    <string name="masukan_password_terlebih_dahulu">Masukan password terlebih dahulu!</string>
+    <string name="berhasil_buat_akun">Berhasil Buat Akun!</string>
+    <string name="silahkan_masuk_sekarang">Silahkan masuk sekarang</string>
 </resources>

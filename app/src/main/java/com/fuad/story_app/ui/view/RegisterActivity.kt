@@ -54,7 +54,7 @@ class RegisterActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
-        viewModel.clearRegister()
+        viewModel.clearRegisterLogin()
     }
 
     private fun showLoading(loading: Boolean) {
@@ -79,9 +79,9 @@ class RegisterActivity : AppCompatActivity() {
 
     private fun showDialog() {
         val builder = AlertDialog.Builder(this)
-        builder.setTitle("Berhasil Buat Akun!")
-            .setMessage("Silahkan login sekarang")
-            .setPositiveButton("Login") { _, _ ->
+        builder.setTitle(getString(R.string.berhasil_buat_akun))
+            .setMessage(getString(R.string.silahkan_masuk_sekarang))
+            .setPositiveButton(getString(R.string.login)) { _, _ ->
                 val intent = Intent(this, LoginActivity::class.java).apply {
                     flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
                 }
@@ -97,7 +97,7 @@ class RegisterActivity : AppCompatActivity() {
         binding.edRegisterEmail.addTextChangedListener { editable ->
             val email = editable.toString().trim()
             if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-                binding.edRegisterEmail.error = "Masukan Email yang valid!"
+                binding.edRegisterEmail.error = getString(R.string.email_tidak_valid)
             } else {
                 binding.edRegisterEmail.error = null
             }
@@ -111,17 +111,18 @@ class RegisterActivity : AppCompatActivity() {
             var valid = true
 
             if (nama.isEmpty()) {
-                binding.edRegisterName.error = "Masukan nama terlebih dahulu!"
+                binding.edRegisterName.error = getString(R.string.masukan_nama_terlebih_dahulu)
                 valid = false
             }
 
             if (email.isEmpty()) {
-                binding.edRegisterEmail.error = "Masukan email terlebih dahulu!"
+                binding.edRegisterEmail.error = getString(R.string.masukan_email_terlebih_dahulu)
                 valid = false
             }
 
             if (password.isEmpty()) {
-                binding.edRegisterPassword.error = "Masukan password terlebih dahulu!"
+                binding.edRegisterPassword.error =
+                    getString(R.string.masukan_password_terlebih_dahulu)
                 valid = false
             }
 
