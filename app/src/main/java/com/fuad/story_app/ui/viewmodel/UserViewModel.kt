@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fuad.story_app.data.remote.response.ListStoryItem
 import com.fuad.story_app.data.remote.response.LoginResult
+import com.fuad.story_app.data.remote.response.Story
 import com.fuad.story_app.data.repository.UserRepository
 import kotlinx.coroutines.launch
 
@@ -23,6 +24,9 @@ class UserViewModel(private val userRepository: UserRepository) : ViewModel() {
     val getAllMessage: LiveData<String?> get() = userRepository.getAllMessage
     private val _loginStatus = MutableLiveData<Boolean>()
     val loginStatus: LiveData<Boolean> get() = _loginStatus
+
+    val getDetailResult: LiveData<Story> get() = userRepository.getDetailResult
+    val getDetailMessage: LiveData<String?> get() = userRepository.getDetailMessage
 
     fun register(name: String, email: String, password: String) {
         viewModelScope.launch {
@@ -43,6 +47,12 @@ class UserViewModel(private val userRepository: UserRepository) : ViewModel() {
     fun getAllStory() {
         viewModelScope.launch {
             userRepository.getAllStories(50)
+        }
+    }
+
+    fun getDetailStory(id: String){
+        viewModelScope.launch {
+            userRepository.getDetailStories(id)
         }
     }
 

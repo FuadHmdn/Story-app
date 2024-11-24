@@ -25,7 +25,12 @@ class HomeActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        val adapter = StoryAdapter()
+        val adapter = StoryAdapter{ item ->
+            val id: String = item.id
+            val intent = Intent(this, DetailActivity::class.java)
+            intent.putExtra(DetailActivity.ID_STORY, id)
+            startActivity(intent)
+        }
         binding.rvItem.layoutManager = LinearLayoutManager(this@HomeActivity)
 
         viewModel.loginStatus.observe(this){ isLogin ->
@@ -42,6 +47,11 @@ class HomeActivity : AppCompatActivity() {
             }
         }
         viewModel.getLoginStatus()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        loadHomeData()
     }
 
     private fun loadHomeData() {

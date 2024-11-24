@@ -9,16 +9,20 @@ import com.bumptech.glide.Glide
 import com.fuad.story_app.data.remote.response.ListStoryItem
 import com.fuad.story_app.databinding.ListStoryBinding
 
-class StoryAdapter: ListAdapter<ListStoryItem, StoryAdapter.ViewHolder>(DIFF_CALLBACK) {
+class StoryAdapter(private val onClick: (ListStoryItem) -> Unit): ListAdapter<ListStoryItem, StoryAdapter.ViewHolder>(DIFF_CALLBACK) {
 
     class ViewHolder(private val binding: ListStoryBinding): RecyclerView.ViewHolder(binding.root) {
-        fun bind(story: ListStoryItem) {
+        fun bind(story: ListStoryItem, onClick: (ListStoryItem) -> Unit) {
             Glide.with(binding.root.context)
                 .load(story.photoUrl)
                 .into(binding.ivItemPhoto)
 
             binding.tvItemName.text = story.name
             binding.tvItemDecription.text = story.description
+
+            binding.root.setOnClickListener {
+                onClick(story)
+            }
         }
 
     }
@@ -45,6 +49,6 @@ class StoryAdapter: ListAdapter<ListStoryItem, StoryAdapter.ViewHolder>(DIFF_CAL
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val story = getItem(position)
-        holder.bind(story)
+        holder.bind(story, onClick)
     }
 }

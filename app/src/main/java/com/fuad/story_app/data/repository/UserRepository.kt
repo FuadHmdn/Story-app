@@ -4,11 +4,13 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.fuad.story_app.data.local.preferences.UsersPreferences
 import com.fuad.story_app.data.remote.ApiService
+import com.fuad.story_app.data.remote.response.DetailStoryResponse
 import com.fuad.story_app.data.remote.response.GetAllStoryResponse
 import com.fuad.story_app.data.remote.response.ListStoryItem
 import com.fuad.story_app.data.remote.response.LoginResponse
 import com.fuad.story_app.data.remote.response.LoginResult
 import com.fuad.story_app.data.remote.response.Response
+import com.fuad.story_app.data.remote.response.Story
 import com.google.gson.Gson
 import kotlinx.coroutines.flow.Flow
 import okhttp3.MultipartBody
@@ -42,6 +44,11 @@ class UserRepository(
     private val _getALlResult = MutableLiveData<List<ListStoryItem>>()
     val getALlResult: LiveData<List<ListStoryItem>> get() = _getALlResult
 
+    private val _getDetailMessage = MutableLiveData<String?>()
+    val getDetailMessage: LiveData<String?> get() = _getDetailMessage
+    private val _getDetailResult = MutableLiveData<Story>()
+    val getDetailResult: LiveData<Story> get() = _getDetailResult
+
     suspend fun saveSession(session: LoginResult) {
         usersPreferences.saveLoginSession(session)
     }
@@ -50,7 +57,7 @@ class UserRepository(
         usersPreferences.saveLoginStatus(isLogin)
     }
 
-    fun getLoginStatus(): Flow<Boolean>{
+    fun getLoginStatus(): Flow<Boolean> {
         return usersPreferences.getLoginStatus()
     }
 
@@ -113,7 +120,7 @@ class UserRepository(
             _loginMessage.postValue(e.message)
             _isLoading.value = false
             _isLoginSuccess.value = true
-        }catch (e: HttpException) {
+        } catch (e: HttpException) {
             _isLoading.value = false
             _isLoginSuccess.value = true
             val json = e.response()?.errorBody()?.string()
@@ -147,11 +154,11 @@ class UserRepository(
                 }
             }
 
-        }catch (e: Exception) {
+        } catch (e: Exception) {
             _getAllMessage.value = e.message
             _isLoading.value = false
             _isGetAllSuccess.value = false
-        }catch (e: HttpException) {
+        } catch (e: HttpException) {
             _isLoading.value = false
             val json = e.response()?.errorBody()?.string()
             val response = Gson().fromJson(json, GetAllStoryResponse::class.java)
@@ -166,7 +173,20 @@ class UserRepository(
     }
 
     suspend fun getDetailStories(id: String) {
-        apiService.getDetailStories(id)
+        _isLoading.value = true
+        try {
+            val result = apiService.getDetailStories(id)
+            _getDetailMessage.value = result.message
+            _getDetailResult.value = result.story
+        } catch (e: HttpException) {
+            val json = e.response()?.errorBody()?.string()
+            val result = Gson().fromJson(json, DetailStoryResponse::class.java)
+            _loginMessage.value = result.message
+        } catch (e: Exception) {
+            _getAllMessage.value = e.message
+            _isLoading.value = false
+            _isGetAllSuccess.value = false
+        }
     }
 
     fun clearMessage() {
