@@ -51,6 +51,11 @@ class HomeActivity : AppCompatActivity() {
             }
         }
         viewModel.getLoginStatus()
+
+        binding.btnFloating.setOnClickListener {
+            val intent = Intent(this, SubmitStoryActivity::class.java)
+            startActivity(intent)
+        }
     }
 
     override fun onResume() {

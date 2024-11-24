@@ -66,7 +66,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tv_detail_name"
-            tools:text="@string/email_tidak_valid" />
+            tools:text="@string/masukan_deskripsi" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

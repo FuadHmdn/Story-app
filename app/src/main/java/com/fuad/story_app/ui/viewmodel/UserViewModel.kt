@@ -1,5 +1,6 @@
 package com.fuad.story_app.ui.viewmodel
 
+import android.net.Uri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -9,6 +10,8 @@ import com.fuad.story_app.data.remote.response.LoginResult
 import com.fuad.story_app.data.remote.response.Story
 import com.fuad.story_app.data.repository.UserRepository
 import kotlinx.coroutines.launch
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
 
 class UserViewModel(private val userRepository: UserRepository) : ViewModel() {
 
@@ -27,6 +30,11 @@ class UserViewModel(private val userRepository: UserRepository) : ViewModel() {
 
     val getDetailResult: LiveData<Story> get() = userRepository.getDetailResult
     val getDetailMessage: LiveData<String?> get() = userRepository.getDetailMessage
+
+    val isSuccessAddStory: LiveData<Boolean> get() = userRepository.isSuccessAddStory
+    val getAddStoryMessage: LiveData<String?> get() = userRepository.getSubmitResult
+
+    var currentUri: Uri? = null
 
     fun register(name: String, email: String, password: String) {
         viewModelScope.launch {
@@ -68,6 +76,12 @@ class UserViewModel(private val userRepository: UserRepository) : ViewModel() {
         }
     }
 
+    fun addStory(multipart: MultipartBody.Part, desc: RequestBody){
+        viewModelScope.launch {
+            userRepository.addStories(multipart, desc)
+        }
+    }
+
     fun getLoginStatus() {
         viewModelScope.launch {
             userRepository.getLoginStatus().collect {
@@ -84,5 +98,9 @@ class UserViewModel(private val userRepository: UserRepository) : ViewModel() {
 
     fun clearMessage() {
         userRepository.clearMessage()
+    }
+
+    fun clearAddStoryStatus(){
+        userRepository.clearSubmitStatus()
     }
 }

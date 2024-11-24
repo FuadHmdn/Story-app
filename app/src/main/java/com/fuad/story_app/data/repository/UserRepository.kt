@@ -49,6 +49,11 @@ class UserRepository(
     private val _getDetailResult = MutableLiveData<Story>()
     val getDetailResult: LiveData<Story> get() = _getDetailResult
 
+    private val _isSuccessAddStory = MutableLiveData<Boolean>()
+    val isSuccessAddStory: LiveData<Boolean> get() = _isSuccessAddStory
+    private val _getSubmitResult = MutableLiveData<String?>()
+    val getSubmitResult: LiveData<String?> get() = _getSubmitResult
+
     suspend fun saveSession(session: LoginResult) {
         usersPreferences.saveLoginSession(session)
     }
@@ -122,11 +127,11 @@ class UserRepository(
             val json = e.response()?.errorBody()?.string()
             val errorBody = Gson().fromJson(json, LoginResponse::class.java)
             _loginMessage.value = errorBody.message
-        }catch (e: Exception) {
+        } catch (e: Exception) {
             _loginMessage.postValue(e.message)
             _isLoading.value = false
             _isLoginSuccess.value = true
-        }catch (e: SocketTimeoutException) {
+        } catch (e: SocketTimeoutException) {
             _isLoading.value = false
             _isLoginSuccess.value = true
             _loginMessage.value = e.message.toString()
@@ -134,7 +139,29 @@ class UserRepository(
     }
 
     suspend fun addStories(multipart: MultipartBody.Part, desc: RequestBody) {
-        apiService.addStory(multipart, desc)
+        _isLoading.value = true
+        try {
+            val result = apiService.addStory(multipart, desc)
+            if (!result.error) {
+                _isSuccessAddStory.value = true
+                _isLoading.value = false
+                _getSubmitResult.value = result.message
+            } else {
+                _isLoading.value = false
+                _getSubmitResult.value = result.message
+            }
+        } catch (e: HttpException) {
+            _isLoading.value = false
+            val json = e.response()?.errorBody()?.string()
+            val errorBody = Gson().fromJson(json, Response::class.java)
+            _getSubmitResult.value = errorBody.message
+        } catch (e: Exception) {
+            _isLoading.value = false
+            _getSubmitResult.value = e.message
+        } catch (e: SocketTimeoutException) {
+            _isLoading.value = false
+            _getSubmitResult.value = e.message
+        }
     }
 
     suspend fun getAllStories(size: Int) {
@@ -189,9 +216,14 @@ class UserRepository(
         }
     }
 
+    fun clearSubmitStatus(){
+        _isSuccessAddStory.value = false
+    }
+
     fun clearMessage() {
         _loginMessage.value = null
         _registerMessage.value = null
         _getAllMessage.value = null
+        _getSubmitResult.value = null
     }
 }
