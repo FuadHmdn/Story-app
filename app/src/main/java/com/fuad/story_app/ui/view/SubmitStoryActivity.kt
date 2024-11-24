@@ -80,7 +80,7 @@ class SubmitStoryActivity : AppCompatActivity() {
             launcherIntentCamera.launch(uri!!)
         }
 
-        binding.btnKirim.setOnClickListener {
+        binding.buttonAdd.setOnClickListener {
             var valid = true
             val desc = binding.edAddDescription.text.toString().trim()
 

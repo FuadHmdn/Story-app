@@ -102,6 +102,11 @@ class HomeActivity : AppCompatActivity() {
                 viewModel.removeSession()
                 true
             }
+            R.id.action_settings -> {
+                val intent = Intent(this, SettingActivity::class.java)
+                startActivity(intent)
+                true
+            }
             else -> {
                 false
             }

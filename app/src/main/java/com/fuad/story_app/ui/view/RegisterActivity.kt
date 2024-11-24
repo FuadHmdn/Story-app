@@ -7,7 +7,6 @@ import android.view.View
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -16,6 +15,10 @@ import com.fuad.story_app.R
 import com.fuad.story_app.databinding.ActivityRegisterBinding
 import com.fuad.story_app.ui.viewmodel.UserViewModel
 import com.fuad.story_app.ui.viewmodel.ViewModelFactory
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class RegisterActivity : AppCompatActivity() {
 
@@ -41,8 +44,12 @@ class RegisterActivity : AppCompatActivity() {
         }
         viewModel.isRegisterSuccess.observe(this) { isError ->
             if (isError == false) {
-                clearEditText()
-                showDialog()
+                CoroutineScope(Dispatchers.Main).launch {
+                    clearEditText()
+                    delay(1000)
+                    moveToLogin()
+                }
+
             }
         }
         viewModel.isLoading.observe(this) { isLoading ->
@@ -77,20 +84,9 @@ class RegisterActivity : AppCompatActivity() {
         binding.edRegisterPassword.error = null
     }
 
-    private fun showDialog() {
-        val builder = AlertDialog.Builder(this)
-        builder.setTitle(getString(R.string.berhasil_buat_akun))
-            .setMessage(getString(R.string.silahkan_masuk_sekarang))
-            .setPositiveButton(getString(R.string.login)) { _, _ ->
-                val intent = Intent(this, LoginActivity::class.java).apply {
-                    flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
-                }
-
-                startActivity(intent)
-            }
-
-        val dialog = builder.create()
-        dialog.show()
+    private fun moveToLogin() {
+        val intent = Intent(this, LoginActivity::class.java)
+        startActivity(intent)
     }
 
     private fun setListener() {
@@ -116,7 +112,8 @@ class RegisterActivity : AppCompatActivity() {
             }
 
             if (email.isEmpty()) {
-                binding.edRegisterEmail.error = getString(R.string.masukan_email_terlebih_dahulu)
+                binding.edRegisterEmail.error =
+                    getString(R.string.masukan_email_terlebih_dahulu)
                 valid = false
             }
 
