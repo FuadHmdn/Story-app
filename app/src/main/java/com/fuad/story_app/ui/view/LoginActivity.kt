@@ -16,6 +16,10 @@ import com.fuad.story_app.data.remote.response.LoginResult
 import com.fuad.story_app.databinding.ActivityLoginBinding
 import com.fuad.story_app.ui.viewmodel.UserViewModel
 import com.fuad.story_app.ui.viewmodel.ViewModelFactory
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class LoginActivity : AppCompatActivity() {
 
@@ -43,8 +47,11 @@ class LoginActivity : AppCompatActivity() {
 
         viewModel.isLoginSuccess.observe(this){ isError ->
             if (isError == false) {
-                viewModel.saveLoginStatus(true)
-                moveToHomeActivity()
+                CoroutineScope(Dispatchers.Main).launch {
+                    viewModel.saveLoginStatus(true)
+                    delay(1000)
+                    moveToHomeActivity()
+                }
             }
         }
 

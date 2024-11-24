@@ -2,6 +2,7 @@ package com.fuad.story_app.ui.view
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -34,7 +35,9 @@ class HomeActivity : AppCompatActivity() {
         binding.rvItem.layoutManager = LinearLayoutManager(this@HomeActivity)
 
         viewModel.loginStatus.observe(this){ isLogin ->
+            Log.d("HOME", "$isLogin")
             if (isLogin) {
+                Log.d("HOME", "MASUK HOME")
                 viewModel.getAllResult.observe(this@HomeActivity) { list ->
                     if (list.isNotEmpty()) {
                         adapter.submitList(list)
@@ -43,6 +46,7 @@ class HomeActivity : AppCompatActivity() {
                 }
                 loadHomeData()
             } else {
+                Log.d("LOGIN", "KELUAR LOGIN")
                 moveToLogin()
             }
         }

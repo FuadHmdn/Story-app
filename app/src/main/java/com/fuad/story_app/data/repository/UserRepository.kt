@@ -116,17 +116,17 @@ class UserRepository(
                 _loginMessage.value = result.message
                 _loginResult.value = result.loginResult
             }
-        } catch (e: Exception) {
-            _loginMessage.postValue(e.message)
-            _isLoading.value = false
-            _isLoginSuccess.value = true
         } catch (e: HttpException) {
             _isLoading.value = false
             _isLoginSuccess.value = true
             val json = e.response()?.errorBody()?.string()
             val errorBody = Gson().fromJson(json, LoginResponse::class.java)
             _loginMessage.value = errorBody.message
-        } catch (e: SocketTimeoutException) {
+        }catch (e: Exception) {
+            _loginMessage.postValue(e.message)
+            _isLoading.value = false
+            _isLoginSuccess.value = true
+        }catch (e: SocketTimeoutException) {
             _isLoading.value = false
             _isLoginSuccess.value = true
             _loginMessage.value = e.message.toString()
