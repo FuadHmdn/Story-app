@@ -31,27 +31,27 @@ class DetailActivity : AppCompatActivity() {
             insets
         }
 
-        val id = intent.getStringExtra(ID_STORY)
-        id?.let {
-            Log.d("DETAIL", "$id")
-            viewModel.getDetailStory(id)
-
-            viewModel.getDetailResult.observe(this) { results ->
-                Log.d("DETAIL", results.photoUrl)
-                Glide.with(this)
-                    .load(results.photoUrl)
-                    .placeholder(R.drawable.ic_baseline_image_search_24)
-                    .error(R.drawable.ic_baseline_error_outline_24)
-                    .into(binding.ivDetailPhoto)
-
-                binding.tvDetailName.text = results.name
-                binding.tvDetailDescription.text = results.description
-            }
-        } ?: run {
-            viewModel.getDetailMessage.observe(this) {
-                showToast(it)
-            }
-        }
+//        val id = intent.getStringExtra(ID_STORY)
+//        id?.let {
+//            Log.d("DETAIL", "$id")
+//            viewModel.getDetailStory(id)
+//
+//            viewModel.getDetailResult.observe(this) { results ->
+//                Log.d("DETAIL", results.photoUrl)
+//                Glide.with(this)
+//                    .load(results.photoUrl)
+//                    .placeholder(R.drawable.ic_baseline_image_search_24)
+//                    .error(R.drawable.ic_baseline_error_outline_24)
+//                    .into(binding.ivDetailPhoto)
+//
+//                binding.tvDetailName.text = results.name
+//                binding.tvDetailDescription.text = results.description
+//            }
+//        } ?: run {
+//            viewModel.getDetailMessage.observe(this) {
+//                showToast(it)
+//            }
+//        }
     }
 
     private fun showToast(message: String?) {

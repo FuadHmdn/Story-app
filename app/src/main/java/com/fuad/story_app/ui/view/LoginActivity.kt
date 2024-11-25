@@ -1,7 +1,10 @@
 package com.fuad.story_app.ui.view
 
+import android.animation.AnimatorSet
+import android.animation.ObjectAnimator
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.util.Patterns
 import android.view.View
 import android.widget.Toast
@@ -12,20 +15,17 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.widget.addTextChangedListener
 import com.fuad.story_app.R
-import com.fuad.story_app.data.remote.response.LoginResult
 import com.fuad.story_app.databinding.ActivityLoginBinding
+import com.fuad.story_app.ui.viewmodel.LoginViewModel
 import com.fuad.story_app.ui.viewmodel.UserViewModel
 import com.fuad.story_app.ui.viewmodel.ViewModelFactory
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 class LoginActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityLoginBinding
     private val factory: ViewModelFactory by lazy { ViewModelFactory.getInstance(this) }
-    private val viewModel: UserViewModel by viewModels { factory }
+    private val viewModel: LoginViewModel by viewModels { factory }
+    private val userViewModel: UserViewModel by viewModels { factory }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,43 +37,74 @@ class LoginActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+        animate()
+        setListener()
 
         viewModel.loginResult.observe(this) { result ->
             result?.let {
-                val session = LoginResult(result.name, result.userId, result.token)
-                viewModel.saveSession(session)
-            }
-        }
+                if (it.name != null && it.userId != null && it.token != null) {
+                    userViewModel.saveLoginSession(
+                        it.token,
+                        it.userId,
+                        it.name
+                    ) {
+                        moveToHomeActivity()
 
-        viewModel.isLoginSuccess.observe(this){ isError ->
-            if (isError == false) {
-                CoroutineScope(Dispatchers.Main).launch {
-                    viewModel.saveLoginStatus(true)
-                    delay(1000)
-                    moveToHomeActivity()
+                    }
                 }
             }
         }
 
-        viewModel.loginMessage.observe(this){ message ->
-            message?.let {
+        viewModel.loginLoading.observe(this) {
+            showLoading(it)
+        }
+
+        viewModel.loginMessage.observe(this){
+            if (it != null) {
                 showToast(it)
                 viewModel.clearMessage()
             }
         }
-
-        viewModel.isLoading.observe(this){ isLoading ->
-            showLoading(isLoading)
-        }
-
-        setListener()
     }
 
-    private fun moveToHomeActivity(){
+
+    private fun animate() {
+        val title = ObjectAnimator.ofFloat(binding.tvLogin, View.TRANSLATION_X, -150f, 0f).apply {
+            duration = 1500
+        }
+        val image = ObjectAnimator.ofFloat(binding.imgLogin, View.TRANSLATION_X, -90f, 0f).apply {
+            duration = 1500
+        }
+        val editText = ObjectAnimator.ofFloat(binding.edLoginEmail, View.ALPHA, 1f).setDuration(500)
+        val editText2 =
+            ObjectAnimator.ofFloat(binding.edLoginPassword, View.ALPHA, 1f).setDuration(500)
+        val label = ObjectAnimator.ofFloat(binding.labelEmail, View.ALPHA, 1f).setDuration(500)
+        val label2 = ObjectAnimator.ofFloat(binding.labelPassword, View.ALPHA, 1f).setDuration(500)
+        val daftar = ObjectAnimator.ofFloat(binding.buatAkun, View.ALPHA, 1f).setDuration(500)
+
+        val together = AnimatorSet().apply {
+            playTogether(title, image)
+        }
+
+        val together2 = AnimatorSet().apply {
+            playTogether(editText, editText2, label, label2, daftar)
+        }
+
+        val button = ObjectAnimator.ofFloat(binding.btnLogin, View.ALPHA, 1f).apply {
+            duration = 500
+        }
+
+        AnimatorSet().apply {
+            playSequentially(together, together2, button)
+            start()
+        }
+    }
+
+    private fun moveToHomeActivity() {
+        Log.d("LOGIN", "MASUK KE HOME ACTIVITY")
         val intent = Intent(this, HomeActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
         }
-        viewModel.clearRegisterLogin()
         startActivity(intent)
     }
 

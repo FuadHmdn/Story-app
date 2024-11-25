@@ -38,16 +38,19 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
+            android:alpha="0"
             android:labelFor="@id/ed_login_email"
             android:text="@string/email"
             app:layout_constraintStart_toStartOf="@id/ed_login_email"
-            app:layout_constraintTop_toBottomOf="@id/img_login" />
+            app:layout_constraintTop_toBottomOf="@id/img_login"
+            tools:alpha="1" />
 
         <EditText
             android:id="@+id/ed_login_email"
             android:layout_width="320dp"
             android:layout_height="50dp"
             android:layout_marginTop="8dp"
+            android:alpha="0"
             android:autofillHints=""
             android:background="@drawable/edit_text_border"
             android:drawableStart="@drawable/ic_baseline_email_24"
@@ -57,23 +60,27 @@
             android:padding="8dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/label_email" />
+            app:layout_constraintTop_toBottomOf="@id/label_email"
+            tools:alpha="1" />
 
         <TextView
             android:id="@+id/label_password"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
+            android:alpha="0"
             android:labelFor="@id/ed_login_password"
             android:text="@string/password"
             app:layout_constraintStart_toStartOf="@id/ed_login_password"
-            app:layout_constraintTop_toBottomOf="@id/ed_login_email" />
+            app:layout_constraintTop_toBottomOf="@id/ed_login_email"
+            tools:alpha="1" />
 
         <com.fuad.story_app.ui.components.MyEditText
             android:id="@+id/ed_login_password"
             android:layout_width="320dp"
             android:layout_height="50dp"
             android:layout_marginTop="8dp"
+            android:alpha="0"
             android:autofillHints=""
             android:background="@drawable/edit_text_border"
             android:drawableStart="@drawable/ic_baseline_lock_24"
@@ -83,7 +90,8 @@
             android:padding="8dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/label_password" />
+            app:layout_constraintTop_toBottomOf="@id/label_password"
+            tools:alpha="1" />
 
         <TextView
             android:id="@+id/buat_akun"
@@ -91,6 +99,8 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:text="@string/buat_akun"
+            android:alpha="0"
+            tools:alpha="1"
             app:layout_constraintEnd_toEndOf="@id/ed_login_password"
             app:layout_constraintTop_toBottomOf="@id/ed_login_password" />
 
@@ -100,6 +110,8 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="52dp"
             android:text="@string/login"
+            android:alpha="0"
+            tools:alpha="1"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/ed_login_password" />

@@ -13,7 +13,6 @@ import retrofit2.http.Multipart
 import retrofit2.http.POST
 import retrofit2.http.Part
 import retrofit2.http.Path
-import retrofit2.http.Query
 
 interface ApiService {
 
@@ -36,16 +35,18 @@ interface ApiService {
     @POST("stories")
     suspend fun addStory(
         @Part file: MultipartBody.Part,
-        @Part("description") description: RequestBody
+        @Part("description") description: RequestBody,
+        @retrofit2.http.Header("Authorization") token: String
     ): Response
 
     @GET("stories")
     suspend fun getAllStories(
-        @Query("size") size: Int
+        @retrofit2.http.Header("Authorization") token: String
     ): GetAllStoryResponse
 
     @GET("stories/{id}")
     suspend fun getDetailStories(
-        @Path("id") id: String
+        @Path("id") id: String,
+        @retrofit2.http.Header("Authorization") token: String
     ): DetailStoryResponse
 }

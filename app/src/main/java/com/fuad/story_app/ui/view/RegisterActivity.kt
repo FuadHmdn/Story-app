@@ -13,17 +13,13 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.widget.addTextChangedListener
 import com.fuad.story_app.R
 import com.fuad.story_app.databinding.ActivityRegisterBinding
-import com.fuad.story_app.ui.viewmodel.UserViewModel
+import com.fuad.story_app.ui.viewmodel.LoginViewModel
 import com.fuad.story_app.ui.viewmodel.ViewModelFactory
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 class RegisterActivity : AppCompatActivity() {
 
     private val factory: ViewModelFactory by lazy { ViewModelFactory.getInstance(this) }
-    private val viewModel: UserViewModel by viewModels { factory }
+    private val viewModel: LoginViewModel by viewModels { factory }
     private lateinit var binding: ActivityRegisterBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -37,31 +33,25 @@ class RegisterActivity : AppCompatActivity() {
             insets
         }
 
-        viewModel.registerMessage.observe(this) { message ->
-            if (message != null) {
-                showToast(message)
+        viewModel.isRegisterSuccess.observe(this) { isSuccess ->
+            if (isSuccess == true) {
+                clearEditText()
+                moveToLogin()
             }
         }
-        viewModel.isRegisterSuccess.observe(this) { isError ->
-            if (isError == false) {
-                CoroutineScope(Dispatchers.Main).launch {
-                    clearEditText()
-                    delay(1000)
-                    moveToLogin()
-                }
 
+        viewModel.registerMessage.observe(this) {
+            if (it != null) {
+                showToast(it)
+                viewModel.clearMessage()
             }
         }
-        viewModel.isLoading.observe(this) { isLoading ->
-            showLoading(isLoading)
+
+        viewModel.loginLoading.observe(this) {
+            showLoading(it)
         }
 
         setListener()
-    }
-
-    override fun onStart() {
-        super.onStart()
-        viewModel.clearRegisterLogin()
     }
 
     private fun showLoading(loading: Boolean) {
@@ -90,6 +80,7 @@ class RegisterActivity : AppCompatActivity() {
     }
 
     private fun setListener() {
+
         binding.edRegisterEmail.addTextChangedListener { editable ->
             val email = editable.toString().trim()
             if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
