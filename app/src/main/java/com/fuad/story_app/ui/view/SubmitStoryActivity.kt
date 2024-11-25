@@ -1,6 +1,5 @@
 package com.fuad.story_app.ui.view
 
-import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
@@ -14,6 +13,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.fuad.story_app.R
 import com.fuad.story_app.databinding.ActivitySubmitStoryBinding
+import com.fuad.story_app.ui.viewmodel.StoryViewModel
 import com.fuad.story_app.ui.viewmodel.UserViewModel
 import com.fuad.story_app.ui.viewmodel.ViewModelFactory
 import com.fuad.story_app.utils.getImageUri
@@ -31,7 +31,8 @@ import okhttp3.RequestBody.Companion.toRequestBody
 class SubmitStoryActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySubmitStoryBinding
     private val factory: ViewModelFactory by lazy { ViewModelFactory.getInstance(this) }
-    private val viewModel: UserViewModel by viewModels { factory }
+    private val viewModel: StoryViewModel by viewModels { factory }
+    private val userViewModel: UserViewModel by viewModels { factory }
     private var uri: Uri? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -45,108 +46,114 @@ class SubmitStoryActivity : AppCompatActivity() {
             insets
         }
 
-//        viewModel.isSuccessAddStory.observe(this) { isSuccess ->
-//            CoroutineScope(Dispatchers.Main).launch {
-//                if (isSuccess) {
-//                    viewModel.clearAddStoryStatus()
-//                    delay(1000)
-//                    finish()
-//                }
-//            }
-//
-//        }
-//
-//        viewModel.isLoading.observe(this) {
-//            showLoading(it)
-//        }
-//
-//        viewModel.getAddStoryMessage.observe(this) { message ->
-//            if (message != null) {
-//                showToast(message)
-//                viewModel.clearMessage()
-//            }
-//        }
-//
-//        setListener()
-//        showImage()
+        viewModel.addStorySuccess.observe(this) { isSuccess ->
+            CoroutineScope(Dispatchers.Main).launch {
+                if (isSuccess == true) {
+                    viewModel.clearAddStatus()
+                    delay(1000)
+                    finish()
+                }
+            }
+
+        }
+
+        viewModel.isStoryLoading.observe(this) {
+            if (it != null) {
+                showLoading(it)
+            }
+        }
+
+        viewModel.addStoryMessage.observe(this) { message ->
+            if (message != null) {
+                showToast(message)
+                viewModel.clearMessageStory()
+            }
+        }
+
+        setListener()
+        showImage()
     }
 
-//    private fun setListener() {
-//        binding.btnGaleri.setOnClickListener {
-//            launcherIntentGalery.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
-//        }
-//
-//        binding.btnKamera.setOnClickListener {
-//            uri = getImageUri(this)
-//            launcherIntentCamera.launch(uri!!)
-//        }
-//
-//        binding.buttonAdd.setOnClickListener {
-//            var valid = true
-//            val desc = binding.edAddDescription.text.toString().trim()
-//
-//            if (desc.isEmpty()) {
-//                valid = false
-//                binding.edAddDescription.error =
-//                    getString(R.string.masukan_deskripsi_terlebih_dahulu)
-//            }
-//
-//            if (viewModel.currentUri == null) {
-//                valid = false
-//                showToast(getString(R.string.tidak_ada_gambar_yang_dipilih))
-//            }
-//
-//            if (valid) {
-//                viewModel.currentUri?.let { uri ->
-//                    val file = uriToFile(uri, this).reduceFileImage()
-//                    val description = binding.edAddDescription.text.toString()
-//
-//                    val body = description.toRequestBody("text/plain".toMediaType())
-//                    val imageFile = file.asRequestBody("image/jpeg".toMediaType())
-//
-//                    val multipartBody = MultipartBody.Part.createFormData(
-//                        "photo",
-//                        file.name,
-//                        imageFile
-//                    )
-//
-//                    viewModel.addStory(multipartBody, body)
-//                }
-//            }
-//        }
-//    }
-//
-//    private fun showImage() {
-//        binding.pvPhoto.setImageURI(viewModel.currentUri)
-//    }
-//
-//    private val launcherIntentGalery = registerForActivityResult(
-//        ActivityResultContracts.PickVisualMedia()
-//    ) { uri ->
-//        if (uri != null) {
-//            viewModel.currentUri = uri
-//            showImage()
-//        }
-//    }
-//
-//    private val launcherIntentCamera = registerForActivityResult(
-//        ActivityResultContracts.TakePicture()
-//    ) { isSuccess ->
-//        if (isSuccess) {
-//            viewModel.currentUri = uri
-//            showImage()
-//        }
-//    }
-//
-//    private fun showToast(message: String?) {
-//        Toast.makeText(this, message, Toast.LENGTH_LONG).show()
-//    }
-//
-//    private fun showLoading(loading: Boolean) {
-//        if (loading) {
-//            binding.progressBar.visibility = View.VISIBLE
-//        } else {
-//            binding.progressBar.visibility = View.GONE
-//        }
-//    }
+    private fun setListener() {
+        binding.btnGaleri.setOnClickListener {
+            launcherIntentGalery.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+        }
+
+        binding.btnKamera.setOnClickListener {
+            uri = getImageUri(this)
+            launcherIntentCamera.launch(uri!!)
+        }
+
+        binding.buttonAdd.setOnClickListener {
+            var valid = true
+            val desc = binding.edAddDescription.text.toString().trim()
+
+            if (desc.isEmpty()) {
+                valid = false
+                binding.edAddDescription.error =
+                    getString(R.string.masukan_deskripsi_terlebih_dahulu)
+            }
+
+            if (viewModel.currentUri == null) {
+                valid = false
+                showToast(getString(R.string.tidak_ada_gambar_yang_dipilih))
+            }
+
+            if (valid) {
+                viewModel.currentUri?.let { uri ->
+                    val file = uriToFile(uri, this).reduceFileImage()
+                    val description = binding.edAddDescription.text.toString()
+
+                    val body = description.toRequestBody("text/plain".toMediaType())
+                    val imageFile = file.asRequestBody("image/jpeg".toMediaType())
+
+                    val multipartBody = MultipartBody.Part.createFormData(
+                        "photo",
+                        file.name,
+                        imageFile
+                    )
+
+                    userViewModel.getTokenUser.observe(this) { token ->
+                        if (token != null) {
+                            viewModel.addStory(multipartBody, body, token)
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private fun showImage() {
+        binding.pvPhoto.setImageURI(viewModel.currentUri)
+    }
+
+    private val launcherIntentGalery = registerForActivityResult(
+        ActivityResultContracts.PickVisualMedia()
+    ) { uri ->
+        if (uri != null) {
+            viewModel.currentUri = uri
+            showImage()
+        }
+    }
+
+    private val launcherIntentCamera = registerForActivityResult(
+        ActivityResultContracts.TakePicture()
+    ) { isSuccess ->
+        if (isSuccess) {
+            viewModel.currentUri = uri
+            showImage()
+        }
+    }
+
+    private fun showToast(message: String?) {
+        Toast.makeText(this, message, Toast.LENGTH_LONG).show()
+    }
+
+    private fun showLoading(loading: Boolean) {
+        if (loading) {
+            binding.progressBar.visibility = View.VISIBLE
+        } else {
+            binding.progressBar.visibility = View.GONE
+        }
+    }
 }

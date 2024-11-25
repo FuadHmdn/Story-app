@@ -7,6 +7,7 @@ import com.fuad.story_app.data.repository.LoginRepository
 import com.fuad.story_app.data.repository.StoryRepository
 import com.fuad.story_app.data.repository.UserRepository
 import com.fuad.story_app.di.Injection
+
 class ViewModelFactory private constructor(
     private val userRepository: UserRepository,
     private val storyRepository: StoryRepository,

@@ -13,7 +13,7 @@ class LoginViewModel(private val loginRepository: LoginRepository) : ViewModel()
     val loginMessage: LiveData<String?> get() = loginRepository.loginMessage
     val loginResult: LiveData<LoginResult?> get() = loginRepository.loginResult
     val registerMessage get() = loginRepository.registerMessage
-    val loginLoading: LiveData<Boolean> get() = loginRepository.loginLoading
+    val loginLoading get() = loginRepository.loginLoading
 
     fun register(name: String, email: String, password: String) {
         viewModelScope.launch {

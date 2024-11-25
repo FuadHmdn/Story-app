@@ -31,50 +31,50 @@ class LoginRepository(
     suspend fun register(name: String, email: String, password: String) {
         _loginLoading.value = true
         try {
-            _loginLoading.value = false
             val result = apiService.register(name, email, password)
             _registerMessage.value = result.message
             _isRegisterSucces.value = true
+            _loginLoading.value = false
 
         } catch (e: HttpException) {
-            _loginLoading.value = false
             _isRegisterSucces.value = false
             val json = e.response()?.errorBody()?.string()
             val result = Gson().fromJson(json, ErrorResponse::class.java)
             _registerMessage.value = result.message
+            _loginLoading.value = false
         } catch (e: Exception) {
-            _loginLoading.value = false
             _isRegisterSucces.value = false
             _registerMessage.value = e.message
+            _loginLoading.value = false
         } catch (e: SocketTimeoutException) {
-            _loginLoading.value = false
             _isRegisterSucces.value = false
             _registerMessage.value = e.message
+            _loginLoading.value = false
         }
     }
 
     suspend fun login(email: String, password: String) {
         _loginLoading.value = true
         try {
-            _loginLoading.value = false
             val result = apiService.login( email, password)
             _loginResult.value = result.loginResult
             _loginMessage.value = result.message
             _isLoginSuccess.value = true
-        } catch (e: HttpException) {
             _loginLoading.value = false
+        } catch (e: HttpException) {
             _isLoginSuccess.value = false
             val json = e.response()?.errorBody()?.string()
             val result = Gson().fromJson(json, ErrorResponse::class.java)
             _loginMessage.value = result.message
+            _loginLoading.value = false
         } catch (e: Exception) {
-            _loginLoading.value = false
             _isLoginSuccess.value = false
             _loginMessage.value = e.message
+            _loginLoading.value = false
         } catch (e: SocketTimeoutException) {
-            _loginLoading.value = false
             _isLoginSuccess.value = false
             _loginMessage.value = e.message
+            _loginLoading.value = false
         }
     }
 

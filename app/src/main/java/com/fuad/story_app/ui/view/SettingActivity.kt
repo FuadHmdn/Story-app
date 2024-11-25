@@ -11,7 +11,7 @@ import com.fuad.story_app.R
 import com.fuad.story_app.databinding.ActivitySettingBinding
 
 class SettingActivity : AppCompatActivity() {
-    lateinit var binding: ActivitySettingBinding
+    private lateinit var binding: ActivitySettingBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

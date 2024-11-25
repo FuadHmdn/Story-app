@@ -37,7 +37,6 @@ class UsersPreferences private constructor(private val dataStore: DataStore<Pref
             preferences[USER_ID] = userId
             preferences[USER_NAME] = name
         }
-        Log.d("PREFERENCES", "Menyimpan Token: $token")
 
     }
 
@@ -47,7 +46,6 @@ class UsersPreferences private constructor(private val dataStore: DataStore<Pref
             preferences.remove(USER_ID)
             preferences.remove(USER_NAME)
         }
-        Log.d("PREFERENCES", "Login session removed successfully")
     }
 
     companion object {

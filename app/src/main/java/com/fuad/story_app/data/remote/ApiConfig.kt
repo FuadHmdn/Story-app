@@ -1,6 +1,5 @@
 package com.fuad.story_app.data.remote
 
-import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit

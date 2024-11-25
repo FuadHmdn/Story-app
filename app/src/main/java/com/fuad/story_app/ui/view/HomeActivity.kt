@@ -35,12 +35,23 @@ class HomeActivity : AppCompatActivity() {
         setListener()
 
         userViewModel.getLoginSession.observe(this) { session ->
-            Log.d("HOME", session.token)
             if (session.token.isNotEmpty()) {
-                storyViewModel.getAllStoryMessage?.let { showToast(it) }
                 showUi()
             } else {
                 moveToLogin()
+            }
+        }
+
+        storyViewModel.getAllStoryMessage.observe(this) { message ->
+            if (message != null) {
+                showToast(message)
+                storyViewModel.clearMessageStory()
+            }
+        }
+
+        storyViewModel.isStoryLoading.observe(this) {
+            if (it != null) {
+                showLoading(it)
             }
         }
     }
@@ -55,7 +66,12 @@ class HomeActivity : AppCompatActivity() {
 
     private fun showUi() {
         storyViewModel.listStoryItem.observe(this) { list ->
-            val adapter = StoryAdapter {}
+            val adapter = StoryAdapter {
+                val id = it.id
+                val intent = Intent(this, DetailActivity::class.java)
+                intent.putExtra(DetailActivity.ID_STORY, id)
+                startActivity(intent)
+            }
             adapter.submitList(list)
             binding.rvItem.adapter = adapter
         }
@@ -81,7 +97,11 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun showLoading(isLoading: Boolean) {
-        binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
+        if (isLoading) {
+            binding.progressBar.visibility = View.VISIBLE
+        } else {
+            binding.progressBar.visibility = View.GONE
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

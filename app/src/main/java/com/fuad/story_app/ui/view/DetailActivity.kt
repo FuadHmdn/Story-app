@@ -11,6 +11,7 @@ import androidx.core.view.WindowInsetsCompat
 import com.bumptech.glide.Glide
 import com.fuad.story_app.R
 import com.fuad.story_app.databinding.ActivityDetailBinding
+import com.fuad.story_app.ui.viewmodel.StoryViewModel
 import com.fuad.story_app.ui.viewmodel.UserViewModel
 import com.fuad.story_app.ui.viewmodel.ViewModelFactory
 
@@ -18,7 +19,8 @@ class DetailActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityDetailBinding
     private val factory: ViewModelFactory by lazy { ViewModelFactory.getInstance(this) }
-    private val viewModel: UserViewModel by viewModels { factory }
+    private val viewModel: StoryViewModel by viewModels { factory }
+    private val userViewModel: UserViewModel by viewModels { factory }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,27 +33,35 @@ class DetailActivity : AppCompatActivity() {
             insets
         }
 
-//        val id = intent.getStringExtra(ID_STORY)
-//        id?.let {
-//            Log.d("DETAIL", "$id")
-//            viewModel.getDetailStory(id)
-//
-//            viewModel.getDetailResult.observe(this) { results ->
-//                Log.d("DETAIL", results.photoUrl)
-//                Glide.with(this)
-//                    .load(results.photoUrl)
-//                    .placeholder(R.drawable.ic_baseline_image_search_24)
-//                    .error(R.drawable.ic_baseline_error_outline_24)
-//                    .into(binding.ivDetailPhoto)
-//
-//                binding.tvDetailName.text = results.name
-//                binding.tvDetailDescription.text = results.description
-//            }
-//        } ?: run {
-//            viewModel.getDetailMessage.observe(this) {
-//                showToast(it)
-//            }
-//        }
+        val id = intent.getStringExtra(ID_STORY)
+
+        userViewModel.getTokenUser.observe(this) { token ->
+            if (token.isNotEmpty()) {
+                id?.let {
+                    viewModel.getDetailStory(it, token)
+
+                    viewModel.storyItem.observe(this) { results ->
+                        results?.let { story ->
+                            Glide.with(this)
+                                .load(story.photoUrl)
+                                .placeholder(R.drawable.ic_baseline_image_search_24)
+                                .error(R.drawable.ic_baseline_error_outline_24)
+                                .into(binding.ivDetailPhoto)
+
+                            binding.tvDetailName.text = story.name
+                            binding.tvDetailDescription.text = story.description
+                        }
+                    }
+                }
+            }
+        }
+
+        viewModel.getDetailStoryMessage.observe(this) { message ->
+            if (message != null) {
+                showToast(message)
+                viewModel.clearMessageStory()
+            }
+        }
     }
 
     private fun showToast(message: String?) {

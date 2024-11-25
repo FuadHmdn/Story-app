@@ -90,6 +90,10 @@ class RegisterActivity : AppCompatActivity() {
             }
         }
 
+        binding.tvLogin.setOnClickListener {
+            finish()
+        }
+
         binding.btnRegister.setOnClickListener {
             val nama = binding.edRegisterName.text.toString().trim()
             val email = binding.edRegisterEmail.text.toString().trim()
