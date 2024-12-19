@@ -29,4 +29,7 @@
     <string name="masukan_deskripsi_terlebih_dahulu">Please enter a description first!</string>
     <string name="pengaturan">Settings</string>
     <string name="ubah_bahasa">Change Language</string>
+    <string name="map">map</string>
+    <string name="title_activity_maps">MapsActivity</string>
+    <string name="location">Location</string>
 </resources>

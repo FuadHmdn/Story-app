@@ -10,4 +10,10 @@
         android:id="@+id/action_logout"
         android:title="@string/log_out"
         app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_map"
+        android:icon="@drawable/ic_map"
+        android:title="@string/map"
+        app:showAsAction="ifRoom" />
 </menu>

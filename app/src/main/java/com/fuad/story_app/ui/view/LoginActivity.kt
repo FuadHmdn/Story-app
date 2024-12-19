@@ -4,7 +4,6 @@ import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.util.Patterns
 import android.view.View
 import android.widget.Toast
@@ -72,6 +71,7 @@ class LoginActivity : AppCompatActivity() {
         val title = ObjectAnimator.ofFloat(binding.tvLogin, View.TRANSLATION_X, -150f, 0f).apply {
             duration = 1500
         }
+
         val image = ObjectAnimator.ofFloat(binding.imgLogin, View.TRANSLATION_X, -90f, 0f).apply {
             duration = 1500
         }

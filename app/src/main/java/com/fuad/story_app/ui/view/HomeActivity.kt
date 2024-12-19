@@ -2,7 +2,6 @@ package com.fuad.story_app.ui.view
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -40,18 +39,18 @@ class HomeActivity : AppCompatActivity() {
             } else {
                 moveToLogin()
             }
-        }
-
-        storyViewModel.getAllStoryMessage.observe(this) { message ->
-            if (message != null) {
-                showToast(message)
-                storyViewModel.clearMessageStory()
-            }
+            session.userId
         }
 
         storyViewModel.isStoryLoading.observe(this) {
             if (it != null) {
                 showLoading(it)
+            }
+        }
+
+        storyViewModel.getAllStoryMessage.observe(this) {
+            if (it != null) {
+                showToast(it)
             }
         }
     }
@@ -65,15 +64,19 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun showUi() {
-        storyViewModel.listStoryItem.observe(this) { list ->
-            val adapter = StoryAdapter {
-                val id = it.id
-                val intent = Intent(this, DetailActivity::class.java)
-                intent.putExtra(DetailActivity.ID_STORY, id)
-                startActivity(intent)
+        userViewModel.getTokenUser.observe(this) { token ->
+            if (token.isNotEmpty()) {
+                storyViewModel.getStory(token).observe(this) { list ->
+                    val adapter = StoryAdapter {
+                        val id = it.id
+                        val intent = Intent(this, DetailActivity::class.java)
+                        intent.putExtra(DetailActivity.ID_STORY, id)
+                        startActivity(intent)
+                    }
+                    adapter.submitData(lifecycle, list)
+                    binding.rvItem.adapter = adapter
+                }
             }
-            adapter.submitList(list)
-            binding.rvItem.adapter = adapter
         }
     }
 
@@ -81,7 +84,16 @@ class HomeActivity : AppCompatActivity() {
         super.onResume()
         userViewModel.getTokenUser.observe(this) { token ->
             if (token.isNotEmpty()) {
-                storyViewModel.getAllStory(token)
+                storyViewModel.getStory(token).observe(this) { list ->
+                    val adapter = StoryAdapter {
+                        val id = it.id
+                        val intent = Intent(this, DetailActivity::class.java)
+                        intent.putExtra(DetailActivity.ID_STORY, id)
+                        startActivity(intent)
+                    }
+                    adapter.submitData(lifecycle, list)
+                    binding.rvItem.adapter = adapter
+                }
             }
         }
     }
@@ -122,11 +134,16 @@ class HomeActivity : AppCompatActivity() {
                 true
             }
 
+            R.id.action_map -> {
+                startActivity(Intent(this, MapsActivity::class.java))
+                true
+            }
+
             else -> super.onOptionsItemSelected(item)
         }
     }
 
-    private fun showToast(message: String) {
+    private fun showToast(message: String?) {
         Toast.makeText(this, message, Toast.LENGTH_LONG).show()
     }
 }

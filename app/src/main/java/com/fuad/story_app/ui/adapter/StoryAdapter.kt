@@ -2,14 +2,14 @@ package com.fuad.story_app.ui.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.fuad.story_app.data.remote.response.ListStoryItem
 import com.fuad.story_app.databinding.ListStoryBinding
 
-class StoryAdapter(private val onClick: (ListStoryItem) -> Unit): ListAdapter<ListStoryItem, StoryAdapter.ViewHolder>(DIFF_CALLBACK) {
+class StoryAdapter(private val onClick: (ListStoryItem) -> Unit): PagingDataAdapter<ListStoryItem, StoryAdapter.ViewHolder>(DIFF_CALLBACK) {
 
     class ViewHolder(private val binding: ListStoryBinding): RecyclerView.ViewHolder(binding.root) {
         fun bind(story: ListStoryItem, onClick: (ListStoryItem) -> Unit) {
@@ -49,6 +49,8 @@ class StoryAdapter(private val onClick: (ListStoryItem) -> Unit): ListAdapter<Li
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val story = getItem(position)
-        holder.bind(story, onClick)
+        if (story != null) {
+            holder.bind(story, onClick)
+        }
     }
 }

@@ -1,7 +1,6 @@
 package com.fuad.story_app.data.local.preferences
 
 import android.content.Context
-import android.util.Log
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
