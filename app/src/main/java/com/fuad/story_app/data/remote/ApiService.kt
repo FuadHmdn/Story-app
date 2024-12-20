@@ -53,7 +53,7 @@ interface ApiService {
     suspend fun getStoriesLocation(
         @retrofit2.http.Header("Authorization") token: String,
         @Query("location") location: Int = 1,
-        @Query("size") size: Int = 30
+        @Query("size") size: Int = 50
     ): GetAllStoryResponse
 
     @GET("stories/{id}")

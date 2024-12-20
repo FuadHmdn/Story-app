@@ -1,10 +1,12 @@
 package com.fuad.story_app.ui.view
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
-import android.location.Location
+import android.location.LocationManager
 import android.net.Uri
 import android.os.Bundle
+import android.provider.Settings
 import android.view.View
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
@@ -24,6 +26,8 @@ import com.fuad.story_app.utils.getImageUri
 import com.fuad.story_app.utils.reduceFileImage
 import com.fuad.story_app.utils.uriToFile
 import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationCallback
+import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -58,7 +62,10 @@ class SubmitStoryActivity : AppCompatActivity() {
                 if (isSuccess == true) {
                     viewModel.clearAddStatus()
                     delay(1000)
-                    finish()
+                    val intent = Intent(this@SubmitStoryActivity, HomeActivity::class.java).apply {
+                        flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
+                    }
+                    startActivity(intent)
                 }
             }
 
@@ -89,22 +96,19 @@ class SubmitStoryActivity : AppCompatActivity() {
                 Manifest.permission.ACCESS_FINE_LOCATION
             ) == PackageManager.PERMISSION_GRANTED
         ) {
-            fusedLocationClient.lastLocation.addOnSuccessListener { location: Location? ->
-                if (location != null) {
-                    viewModel.latitude = location.latitude
-                    viewModel.longitude = location.longitude
-
-                } else {
-                    Toast.makeText(this, "Lokasi tidak tersedia, aktifkan gps terlebih dahulu", Toast.LENGTH_SHORT).show()
-                }
-            }
+            requestNewLocationData()
         } else {
             checkLocationPermission()
         }
     }
 
+
     private fun checkLocationPermission() {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
             ActivityCompat.requestPermissions(
                 this,
                 arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
@@ -125,8 +129,18 @@ class SubmitStoryActivity : AppCompatActivity() {
 
         binding.swicth.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
-                checkLocationPermission()
-                getLastLocation()
+                val locationManager = getSystemService(LOCATION_SERVICE) as LocationManager
+                val isGpsEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
+
+                if (isGpsEnabled) {
+                    checkLocationPermission()
+                    getLastLocation()
+                } else {
+                    Toast.makeText(this, "Harap aktifkan lokasi perangkat Anda", Toast.LENGTH_SHORT)
+                        .show()
+                    val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
+                    startActivity(intent)
+                }
             } else {
                 viewModel.latitude = null
                 viewModel.longitude = null
@@ -156,7 +170,8 @@ class SubmitStoryActivity : AppCompatActivity() {
                     val longitude = viewModel.longitude
 
                     val latitudeBody = latitude.toString().toRequestBody("text/plain".toMediaType())
-                    val longitudeBody = longitude.toString().toRequestBody("text/plain".toMediaType())
+                    val longitudeBody =
+                        longitude.toString().toRequestBody("text/plain".toMediaType())
                     val body = description.toRequestBody("text/plain".toMediaType())
                     val imageFile = file.asRequestBody("image/jpeg".toMediaType())
 
@@ -168,7 +183,13 @@ class SubmitStoryActivity : AppCompatActivity() {
 
                     userViewModel.getTokenUser.observe(this) { token ->
                         if (token != null && viewModel.latitude != null) {
-                            viewModel.addStory(multipartBody, body, token, latitudeBody, longitudeBody)
+                            viewModel.addStory(
+                                multipartBody,
+                                body,
+                                token,
+                                latitudeBody,
+                                longitudeBody
+                            )
                         } else {
                             viewModel.addStory(multipartBody, body, token)
                         }
@@ -209,6 +230,43 @@ class SubmitStoryActivity : AppCompatActivity() {
             binding.progressBar.visibility = View.VISIBLE
         } else {
             binding.progressBar.visibility = View.GONE
+        }
+    }
+
+    private fun requestNewLocationData() {
+        showLoading(true)
+        val locationRequest = com.google.android.gms.location.LocationRequest.Builder(
+            com.google.android.gms.location.Priority.PRIORITY_HIGH_ACCURACY,
+            1000
+        ).setWaitForAccurateLocation(true)
+            .setMaxUpdates(1)
+            .build()
+
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
+            fusedLocationClient.requestLocationUpdates(
+                locationRequest,
+                object : LocationCallback() {
+                    override fun onLocationResult(locationResult: LocationResult) {
+                        val location = locationResult.lastLocation
+                        if (location != null) {
+                            viewModel.latitude = location.latitude
+                            viewModel.longitude = location.longitude
+                            Toast.makeText(
+                                this@SubmitStoryActivity,
+                                "Lokasi ditemukan: ${location.latitude}, ${location.longitude}",
+                                Toast.LENGTH_SHORT
+
+                            ).show()
+                            showLoading(false)
+                        }
+                    }
+                },
+                mainLooper
+            )
         }
     }
 

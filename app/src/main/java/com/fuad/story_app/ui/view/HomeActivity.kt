@@ -80,24 +80,6 @@ class HomeActivity : AppCompatActivity() {
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-        userViewModel.getTokenUser.observe(this) { token ->
-            if (token.isNotEmpty()) {
-                storyViewModel.getStory(token).observe(this) { list ->
-                    val adapter = StoryAdapter {
-                        val id = it.id
-                        val intent = Intent(this, DetailActivity::class.java)
-                        intent.putExtra(DetailActivity.ID_STORY, id)
-                        startActivity(intent)
-                    }
-                    adapter.submitData(lifecycle, list)
-                    binding.rvItem.adapter = adapter
-                }
-            }
-        }
-    }
-
     private fun moveToLogin() {
         Intent(this, LoginActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
